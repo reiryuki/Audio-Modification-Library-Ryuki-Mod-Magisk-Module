@@ -211,6 +211,33 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   fi
 done
 
+# Mount
+lists="*audio*effects*.conf -o -name *audio*effects*.xml\
+       -o -name *policy*.conf -o -name *policy*.xml\
+       -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
+       -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
+       -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
+dir=$MODPATH/system/vendor
+files=$(find $dir/etc -maxdepth 1 -type f -name $lists)
+if [ "`realpath /odm/etc`" == /odm/etc ] && [ "$files" ]; then
+  for i in $files; do
+    j="/odm$(echo $i | sed "s|$dir||")"
+    if [ -f $j ]; then
+      umount $j
+      mount -o bind $i $j
+    fi
+  done
+fi
+if [ -d /my_product/etc ] && [ "$files" ]; then
+  for i in $files; do
+    j="/my_product$(echo $i | sed "s|$dir||")"
+    if [ -f $j ]; then
+      umount $j
+      mount -o bind $i $j
+    fi
+  done
+fi
+
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
 for i in $(find $MODPATH/system -type f); do
   j="$(echo $i | sed "s|$MODPATH||")"
