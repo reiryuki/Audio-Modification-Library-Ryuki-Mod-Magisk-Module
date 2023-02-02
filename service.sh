@@ -182,6 +182,13 @@ legacy_script() {
 exec 2>$MODPATH/debug.log
 set -x
 
+# ryukimod Paths
+MIRROR=$MAGISKTMP/mirror
+SYSTEM=`realpath $MIRROR/system`
+VENDOR=`realpath $MIRROR/vendor`
+ODM=`realpath $MIRROR/odm`
+MY_PRODUCT=`realpath $MIRROR/my_product`
+
 # Detect/install audio mods
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   modname="$(basename $mod)"
@@ -211,15 +218,18 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   fi
 done
 
-# Mount
-lists="*audio*effects*.conf -o -name *audio*effects*.xml\
-       -o -name *policy*.conf -o -name *policy*.xml\
-       -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
-       -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
-       -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
+# ryukimod Reload patched files - original mounted files are seemingly deleted and replaced by sed
+dir=$MODPATH/system
+files=$(find $dir -type f)
+for i in $files; do
+  j="$(echo $i | sed "s|$dir||")"
+  umount $j
+  mount -o bind $i $j
+done
 dir=$MODPATH/system/vendor
-files=$(find $dir/etc -maxdepth 1 -type f -name $lists)
-if [ "`realpath /odm/etc`" == /odm/etc ] && [ "$files" ]; then
+files=$(find $dir/etc -maxdepth 1 -type f)
+if [ ! -d $ODM ] && [ "`realpath /odm/etc`" == /odm/etc ]\
+&& [ "$files" ]; then
   for i in $files; do
     j="/odm$(echo $i | sed "s|$dir||")"
     if [ -f $j ]; then
@@ -228,7 +238,8 @@ if [ "`realpath /odm/etc`" == /odm/etc ] && [ "$files" ]; then
     fi
   done
 fi
-if [ -d /my_product/etc ] && [ "$files" ]; then
+if [ ! -d $MY_PRODUCT ] && [ -d /my_product/etc ]\
+&& [ "$files" ]; then
   for i in $files; do
     j="/my_product$(echo $i | sed "s|$dir||")"
     if [ -f $j ]; then
@@ -237,13 +248,6 @@ if [ -d /my_product/etc ] && [ "$files" ]; then
     fi
   done
 fi
-
-# Reload patched files - original mounted files are seemingly deleted and replaced by sed
-for i in $(find $MODPATH/system -type f); do
-  j="$(echo $i | sed "s|$MODPATH||")"
-  umount $j
-  mount -o bind $i $j
-done
 [ $API -ge 24 ] && killall audioserver 2>/dev/null || killall mediaserver 2>/dev/null
 exit 0
 )&

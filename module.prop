@@ -1,6 +1,7 @@
 id=aml
+name=id=aml
 name=Audio Modification Library
-version=v4.2
+version=v4.2_ryukimod.4
 versionCode=57
 author=zackptg5, ahrion
 description=AudModLib is a framework that allows the seamless integration of multiple audio mods in Magisk.
