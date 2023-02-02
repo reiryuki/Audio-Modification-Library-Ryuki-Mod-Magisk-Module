@@ -1,3 +1,6 @@
+### v4.2 - 1.6.2023
+* Add support for V4A RE
+
 ### v4.1 - 1.31.2022
 * Add support for magisk 24 module update method
 
