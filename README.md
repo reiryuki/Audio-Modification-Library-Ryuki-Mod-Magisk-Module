@@ -8,6 +8,11 @@ To uninstall, REMOVE WITH MAGISK MANAGER
 ## Source Code
 * Module [GitHub](https://github.com/Zackptg5/Audio-Modification-Library)
 
+## Ryuki Mod Version Adventages
+* Added Magisk Delta support. If your device have /odm/etc/ audio files or /my_product/etc audio files, then you need to use the latest Magisk Delta and this modded AML version instead.
+* stage_policy.conf file support
+* Fixed permissions
+
 ## Ryuki Mod Version Download Link
 * https://www.pling.com/p/1981006/
 
