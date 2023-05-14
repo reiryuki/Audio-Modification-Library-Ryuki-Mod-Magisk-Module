@@ -1,7 +1,7 @@
+# ryukimod
 # Variables
-# magisk --path isn't accessible during till part way through post-fs-data 
-[ -d "/sbin/.magisk" ] && MAGISKTMP="/sbin/.magisk" || MAGISKTMP="$(find /dev -mindepth 2 -maxdepth 2 -type d -name ".magisk")"
-MODPATH=$MAGISKTMP/modules/aml
+mount -o rw,remount /data
+MODPATH=${0%/*}
 API=
 moddir=
 amldir=
@@ -55,34 +55,49 @@ osp_detect() {
 exec 2>$MODPATH/debug-pfsd.log
 set -x
 
-# ryukimod Paths
-MIRROR=$MAGISKTMP/mirror
-SYSTEM=`realpath $MIRROR/system`
-VENDOR=`realpath $MIRROR/vendor`
-ODM=`realpath $MIRROR/odm`
-MY_PRODUCT=`realpath $MIRROR/my_product`
+# ryukimod
+# Paths
+MAGISKPATH=`magisk --path`
+if [ "$MAGISKPATH" ]; then
+  MAGISKTMP=$MAGISKPATH/.magisk
+  MIRROR=$MAGISKTMP/mirror
+  ODM=$MIRROR/odm
+  MY_PRODUCT=$MIRROR/my_product
+fi
+SYSTEMPATH=`realpath /system`
+VENDORPATH=`realpath /vendor`
+ODMPATH=`realpath /odm`
+MY_PRODUCTPATH=`realpath /my_product`
 
 # Restore and reset
 . $MODPATH/uninstall.sh
 rm -rf $amldir $MODPATH/system $MODPATH/errors.txt $MODPATH/system.prop
 [ -f "$moddir/acdb/post-fs-data.sh" ] && mv -f $moddir/acdb/post-fs-data.sh $moddir/acdb/post-fs-data.sh.bak
 mkdir $amldir
-# ryukimod Don't follow symlinks
+# ryukimod
+# Don't follow symlinks
 lists="*audio*effects*.conf -o -name *audio*effects*.xml\
        -o -name *policy*.conf -o -name *policy*.xml\
        -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
        -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
        -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
-files="$(find $SYSTEM $VENDOR $ODM $MY_PRODUCT -type f -name $lists)"
+files="$(find $SYSTEMPATH $VENDORPATH $ODMPATH $MY_PRODUCTPATH -type f -name $lists)"
 for file in $files; do
-  name=$(echo "$file" | sed -e "s|$MAGISKTMP/mirror||" -e "s|/system_root/|/|" -e "s|/system/|/|")
+  name=$(echo "$file" | sed -e "s|/system_root/|/|" -e "s|/system/|/|")
   cp_mv -c $file $MODPATH/system$name
   modfiles="/system$name $modfiles"
 done
-if [ ! -d $ODM ] && [ ! -d $MY_PRODUCT ]; then
-  files="$(find /odm /my_product -type f -name $lists)"
+if [ ! -d $ODM ]; then
+  files="$(find /odm -type f -name $lists)"
   for file in $files; do
-    name=$(echo "$file" | sed -e "s|/odm||" -e "s|/my_product/||")
+    name=$(echo "$file" | sed -e "s|/odm||")
+    cp_mv -c $file $MODPATH/system/vendor$name
+  done
+fi
+if [ ! -d $MY_PRODUCT ]; then
+  files="$(find /my_product -type f -name $lists)"
+  for file in $files; do
+    name=$(echo "$file" | sed -e "s|/my_product/||")
     cp_mv -c $file $MODPATH/system/vendor$name
   done
 fi
@@ -92,7 +107,8 @@ osp_detect "music"
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   modname="$(basename $mod)"
   [ -f "$mod/disable" ] && continue
-  # ryukimod Move files
+  # ryukimod
+  # Move files
   files="$(find $mod/system -type f -name $lists 2>/dev/null)"
   [ "$files" ] && echo "$modname" >> $amldir/modlist || continue
   for file in $files; do
@@ -107,7 +123,8 @@ for file in $modfiles; do
   [ "$(find $amldir -type f -path "*$file")" ] || rm -f $MODPATH$file
 done
 
-# ryukimod Set perms and such
+# ryukimod
+# Set perms and such
 set_perm_recursive $MODPATH/system 0 0 0755 0644
 if [ $API -ge 26 ]; then
   set_perm_recursive $MODPATH/system/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0

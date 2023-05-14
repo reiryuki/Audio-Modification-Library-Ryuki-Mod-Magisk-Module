@@ -1,6 +1,6 @@
+# ryukimod
 # Variables
-[ "$(magisk --path 2>/dev/null)" ] && MAGISKTMP="$(magisk --path 2>/dev/null)/.magisk" || MAGISKTMP="/sbin/.magisk"
-MODPATH=$MAGISKTMP/modules/aml
+MODPATH=${0%/*}
 API=
 moddir=
 amldir=
@@ -182,12 +182,15 @@ legacy_script() {
 exec 2>$MODPATH/debug.log
 set -x
 
-# ryukimod Paths
-MIRROR=$MAGISKTMP/mirror
-SYSTEM=`realpath $MIRROR/system`
-VENDOR=`realpath $MIRROR/vendor`
-ODM=`realpath $MIRROR/odm`
-MY_PRODUCT=`realpath $MIRROR/my_product`
+# ryukimod
+# Paths
+MAGISKPATH=`magisk --path`
+if [ "$MAGISKPATH" ]; then
+  MAGISKTMP=$MAGISKPATH/.magisk
+  MIRROR=$MAGISKTMP/mirror
+  ODM=$MIRROR/odm
+  MY_PRODUCT=$MIRROR/my_product
+fi
 
 # Detect/install audio mods
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
@@ -218,7 +221,8 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   fi
 done
 
-# ryukimod Reload patched files - original mounted files are seemingly deleted and replaced by sed
+# ryukimod
+# Reload patched files - original mounted files are seemingly deleted and replaced by sed
 dir=$MODPATH/system
 files=$(find $dir -type f)
 for i in $files; do
@@ -228,7 +232,8 @@ for i in $files; do
 done
 dir=$MODPATH/system/vendor
 files=$(find $dir/etc -maxdepth 1 -type f)
-if [ ! -d $ODM ] && [ "`realpath /odm/etc`" == /odm/etc ]\
+if [ ! -d $ODM ] && [ -d /odm/etc ]\
+&& [ "`realpath /odm/etc`" == /odm/etc ]\
 && [ "$files" ]; then
   for i in $files; do
     j="/odm$(echo $i | sed "s|$dir||")"
