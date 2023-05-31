@@ -9,7 +9,7 @@ To uninstall, REMOVE WITH MAGISK MANAGER
 * Module [GitHub](https://github.com/Zackptg5/Audio-Modification-Library)
 
 ## Ryuki Mod Version Adventages
-* /odm/etc & /my_product/etc audio files support with Magisk Delta
+* /odm/etc/ & /my_product/etc/ audio files support with Magisk Delta
 * /odm/etc/ and /my_product/etc/ audio files mount bind support
 * KernelSU support
 * stage_policy.conf file support

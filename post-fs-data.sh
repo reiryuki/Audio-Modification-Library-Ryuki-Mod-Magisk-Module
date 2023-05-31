@@ -1,4 +1,3 @@
-# ryukimod
 # Variables
 mount -o rw,remount /data
 MODPATH=${0%/*}
@@ -29,7 +28,7 @@ cp_mv() {
 }
 osp_detect() {
   local spaces effects type="$1"
-  local files=$(find $MODPATH/system -type f -name "*audio_effects*.conf" -o -name "*audio_effects*.xml")
+  local files=$(find $MODPATH -type f -name "*audio*effects*.conf" -o -name "*audio*effects*.xml")
   for file in $files; do
     for osp in $type; do
       case $file in
@@ -55,81 +54,73 @@ osp_detect() {
 exec 2>$MODPATH/debug-pfsd.log
 set -x
 
-# ryukimod
-# Paths
-MAGISKPATH=`magisk --path`
-if [ "$MAGISKPATH" ]; then
-  MAGISKTMP=$MAGISKPATH/.magisk
-  MIRROR=$MAGISKTMP/mirror
-  ODM=$MIRROR/odm
-  MY_PRODUCT=$MIRROR/my_product
-fi
-SYSTEMPATH=`realpath /system`
-VENDORPATH=`realpath /vendor`
-ODMPATH=`realpath /odm`
-MY_PRODUCTPATH=`realpath /my_product`
-
 # Restore and reset
 . $MODPATH/uninstall.sh
-rm -rf $amldir $MODPATH/system $MODPATH/errors.txt $MODPATH/system.prop
+rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor  -type f) $MODPATH/errors.txt $MODPATH/system.prop
 [ -f "$moddir/acdb/post-fs-data.sh" ] && mv -f $moddir/acdb/post-fs-data.sh $moddir/acdb/post-fs-data.sh.bak
 mkdir $amldir
-# ryukimod
 # Don't follow symlinks
 lists="*audio*effects*.conf -o -name *audio*effects*.xml\
        -o -name *policy*.conf -o -name *policy*.xml\
        -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
        -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
        -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
-files="$(find $SYSTEMPATH $VENDORPATH $ODMPATH $MY_PRODUCTPATH -type f -name $lists)"
+files="$(find /system /odm /my_product -type f -name $lists)"
 for file in $files; do
-  name=$(echo "$file" | sed -e "s|/system_root/|/|" -e "s|/system/|/|")
+  name=$(echo "$file" | sed 's|/system||')
   cp_mv -c $file $MODPATH/system$name
-  modfiles="/system$name $modfiles"
 done
-if [ ! -d $ODM ]; then
-  files="$(find /odm -type f -name $lists)"
-  for file in $files; do
-    name=$(echo "$file" | sed -e "s|/odm||")
-    cp_mv -c $file $MODPATH/system/vendor$name
-  done
-fi
-if [ ! -d $MY_PRODUCT ]; then
-  files="$(find /my_product -type f -name $lists)"
-  for file in $files; do
-    name=$(echo "$file" | sed -e "s|/my_product/||")
-    cp_mv -c $file $MODPATH/system/vendor$name
-  done
-fi
+files="$(find /vendor -type f -name $lists)"
+for file in $files; do
+  if [ -L $MODPATH/system/vendor ]\
+  && [ -d $MODPATH/vendor ]; then
+    cp_mv -c $file $MODPATH$file
+  else
+    cp_mv -c $file $MODPATH/system$file
+  fi
+done
+rm -f `find $MODPATH -type f -name *audio*effects*spatializer*.xml`
 osp_detect "music"
 
 # Detect/move audio mod files
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   modname="$(basename $mod)"
   [ -f "$mod/disable" ] && continue
-  # ryukimod
   # Move files
-  files="$(find $mod/system -type f -name $lists 2>/dev/null)"
+  files="$(find $mod -type f -name $lists 2>/dev/null)"
   [ "$files" ] && echo "$modname" >> $amldir/modlist || continue
   for file in $files; do
-    cp_mv -m $file $amldir/$modname/$(echo "$file" | sed "s|$mod/||")
+    cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||")
   done
   # Chcon fix for Android Q+
-  [ $API -ge 29 ] && chcon -R u:object_r:vendor_file:s0 $mod/system/vendor/lib*/soundfx 2>/dev/null
+  if [ $API -ge 29 ]; then
+    if [ -L $mod/system/vendor ] && [ -d $mod/vendor ]; then
+      chcon -R u:object_r:vendor_file:s0 $mod/vendor/lib*/soundfx 2>/dev/null
+    else
+      chcon -R u:object_r:vendor_file:s0 $mod/system/vendor/lib*/soundfx 2>/dev/null
+    fi
+  fi
 done
 
-# Remove unneeded files from aml
-for file in $modfiles; do
-  [ "$(find $amldir -type f -path "*$file")" ] || rm -f $MODPATH$file
-done
-
-# ryukimod
 # Set perms and such
-set_perm_recursive $MODPATH/system 0 0 0755 0644
 if [ $API -ge 26 ]; then
-  set_perm_recursive $MODPATH/system/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
-  set_perm_recursive $MODPATH/system/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
-  set_perm_recursive $MODPATH/system/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
   set_perm_recursive $MODPATH/system/odm/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
+  if [ -L $MODPATH/system/vendor ]\
+  && [ -d $MODPATH/vendor ]; then
+    set_perm_recursive $MODPATH/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
+    set_perm_recursive $MODPATH/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
+    set_perm_recursive $MODPATH/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
+  else
+    set_perm_recursive $MODPATH/system/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
+    set_perm_recursive $MODPATH/system/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
+    set_perm_recursive $MODPATH/system/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
+  fi
 fi
 exit 0
+
+
+
+
+
+
+

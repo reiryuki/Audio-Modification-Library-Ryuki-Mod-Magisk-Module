@@ -1,4 +1,3 @@
-# ryukimod
 # Variables
 MODPATH=${0%/*}
 API=
@@ -14,7 +13,7 @@ cp_mv() {
 }
 osp_detect() {
   local spaces effects type="$1"
-  local files=$(find $MODPATH/system -type f -name "*audio_effects*.conf" -o -name "*audio_effects*.xml")
+  local files=$(find $MODPATH -type f -name "*audio*effects*.conf" -o -name "*audio*effects*.xml")
   for file in $files; do
     for osp in $type; do
       case $file in
@@ -52,7 +51,7 @@ patch_cfgs() {
       *) return 1;;
     esac
   done
-  [ -z "$files" ] && files=$(find $MODPATH/system -type f -name "*audio_effects*.conf" -o -name "*audio_effects*.xml") || { files="$1"; shift; }
+  [ -z "$files" ] && files=$(find $MODPATH -type f -name "*audio*effects*.conf" -o -name "*audio*effects*.xml") || { files="$1"; shift; }
   $first && { lib=true; effect=true; }
   if $proxy; then
     effname=$1; uid=${2:?}; shift 2
@@ -172,7 +171,7 @@ legacy_script() {
   for file in $files; do
     local NAME=$(echo "$file" | sed "s|$mod|system|")
     $RUNONCE || { case $file in
-                    *audio_effects*) (. $mod/.aml.sh) || [ "$(grep -x "$modname" $MODPATH/errors.txt)" ] || echo "Error in $modname aml.sh script" >> $MODPATH/errors.txt; COUNT=$(($COUNT + 1));;
+                    *audio*effects*) (. $mod/.aml.sh) || [ "$(grep -x "$modname" $MODPATH/errors.txt)" ] || echo "Error in $modname aml.sh script" >> $MODPATH/errors.txt; COUNT=$(($COUNT + 1));;
                   esac; }
   done
 }
@@ -181,16 +180,6 @@ legacy_script() {
 # Debug
 exec 2>$MODPATH/debug.log
 set -x
-
-# ryukimod
-# Paths
-MAGISKPATH=`magisk --path`
-if [ "$MAGISKPATH" ]; then
-  MAGISKTMP=$MAGISKPATH/.magisk
-  MIRROR=$MAGISKTMP/mirror
-  ODM=$MIRROR/odm
-  MY_PRODUCT=$MIRROR/my_product
-fi
 
 # Detect/install audio mods
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
@@ -207,7 +196,7 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
     fi
   else
     # Favor vendor libs over system ones, no aml builtins are 64bit only - use 32bit lib dir
-    libs="$(find $mod/system/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
+    libs="$(find $mod/system/vendor/lib/soundfx $mod/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
     for lib in $libs; do
       for audmod in $MODPATH/.scripts/$(basename $lib)~*; do
         uuid=$(basename $audmod | sed -r "s/.*~(.*).sh/\1/")
@@ -221,38 +210,18 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   fi
 done
 
-# ryukimod
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
-dir=$MODPATH/system
-files=$(find $dir -type f)
-for i in $files; do
-  j="$(echo $i | sed "s|$dir||")"
+for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
+  j="$(echo $i | sed -e "s|$MODPATH||" -e 's|/system/odm|/odm|' -e 's|/system/my_product|/my_product|')"
   umount $j
   mount -o bind $i $j
 done
-dir=$MODPATH/system/vendor
-files=$(find $dir/etc -maxdepth 1 -type f)
-if [ ! -d $ODM ] && [ -d /odm/etc ]\
-&& [ "`realpath /odm/etc`" == /odm/etc ]\
-&& [ "$files" ]; then
-  for i in $files; do
-    j="/odm$(echo $i | sed "s|$dir||")"
-    if [ -f $j ]; then
-      umount $j
-      mount -o bind $i $j
-    fi
-  done
-fi
-if [ ! -d $MY_PRODUCT ] && [ -d /my_product/etc ]\
-&& [ "$files" ]; then
-  for i in $files; do
-    j="/my_product$(echo $i | sed "s|$dir||")"
-    if [ -f $j ]; then
-      umount $j
-      mount -o bind $i $j
-    fi
-  done
-fi
 [ $API -ge 24 ] && killall audioserver 2>/dev/null || killall mediaserver 2>/dev/null
 exit 0
 )&
+
+
+
+
+
+
