@@ -1,4 +1,4 @@
-# Some devices fail to modify /data without remounting
+# Some devices fails to modify /data at this time without remounting
 mount -o rw,remount /data
 
 # Variables
