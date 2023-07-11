@@ -9,8 +9,16 @@ To uninstall, REMOVE WITH MAGISK MANAGER
 * Module [GitHub](https://github.com/Zackptg5/Audio-Modification-Library)
 
 ## Ryuki Mod Version Adventages
-* /odm/etc/ and /my_product/etc/ audio files mount bind support without Magisk Delta
+* Official Magisk v26+ support
+* Magisk Delta support
+* KernelSU support
+* /odm/etc/ & /my_product/etc/ audio files support with Magisk Delta
+* /odm/etc/ & /my_product/etc/ audio files mount bind support without Magisk Delta
+* stage_policy.conf file support
+* Fix bugs & permissions
 * Support module that copies audio files in post-fs-data.sh instead of in customize.sh
+* Does not copy/modify \*audio\*effects\*spatializer\*.xml that causes conflict in audio flinger
+* Prevent /data modifying failure in some devices
 
 ## Ryuki Mod Version Download Link and Changelog
 * Update via Magisk/KernelSU app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://www.pling.com/p/1981006/
