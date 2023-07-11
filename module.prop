@@ -1,7 +1,7 @@
 id=aml
 name=Audio Modification Library Ryuki Mod
-version=v4.2_ryukimod.6
-versionCode=57
+version=v5.0_ryukimod
+versionCode=58
 author=Rei Ryuki the Fixer
 description=AudModLib is a framework originally created by zackptg5 & ahrion that allows the seamless integration of multiple audio mods in Magisk. Ryuki Mod version has advantages that are not or have not been owned by the official version.
 support=https://forum.xda-developers.com/apps/magisk/module-audio-modification-library-t3579612

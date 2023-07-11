@@ -1,9 +1,15 @@
-# Variables
+# Some devices fail to modify /data without remounting
 mount -o rw,remount /data
-MODPATH=${0%/*}
-API=
-moddir=
+
+# Variables
+MODPATH="${0%/*}"
 amldir=
+API=
+filenames="*audio*effects*.conf -o -name *audio*effects*.xml\
+           -o -name *policy*.conf -o -name *policy*.xml\
+           -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
+           -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
+           -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
 
 # Functions
 set_perm() {
@@ -56,21 +62,17 @@ set -x
 
 # Restore and reset
 . $MODPATH/uninstall.sh
-rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor  -type f) $MODPATH/errors.txt $MODPATH/system.prop
+moddir="$(dirname $MODPATH)" # Changed by uninstall script
+rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor -type f) $MODPATH/errors.txt $MODPATH/system.prop 2>/dev/null
 [ -f "$moddir/acdb/post-fs-data.sh" ] && mv -f $moddir/acdb/post-fs-data.sh $moddir/acdb/post-fs-data.sh.bak
 mkdir $amldir
 # Don't follow symlinks
-lists="*audio*effects*.conf -o -name *audio*effects*.xml\
-       -o -name *policy*.conf -o -name *policy*.xml\
-       -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
-       -o -name *audio*device*.xml -o -name *sapa*feature*.xml\
-       -o -name *audio*platform*info*.xml -o -name *audio*configs*.xml"
-files="$(find /system /odm /my_product -type f -name $lists)"
+files="$(find /system /odm /my_product -type f -name $filenames)"
 for file in $files; do
-  name=$(echo "$file" | sed 's|/system||')
+  name=$(echo "$file" | sed 's|/system||g')
   cp_mv -c $file $MODPATH/system$name
 done
-files="$(find /vendor -type f -name $lists)"
+files="$(find /vendor -type f -name $filenames)"
 for file in $files; do
   if [ -L $MODPATH/system/vendor ]\
   && [ -d $MODPATH/vendor ]; then
@@ -83,14 +85,14 @@ rm -f `find $MODPATH -type f -name *audio*effects*spatializer*.xml`
 osp_detect "music"
 
 # Detect/move audio mod files
-for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
+for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml -a ! -name 'lost+found'); do
   modname="$(basename $mod)"
   [ -f "$mod/disable" ] && continue
   # Move files
-  files="$(find $mod -type f -name $lists 2>/dev/null)"
+  files="$(find $mod -type f -name $filenames 2>/dev/null)"
   [ "$files" ] && echo "$modname" >> $amldir/modlist || continue
   for file in $files; do
-    cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||")
+    cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||g")
   done
   # Chcon fix for Android Q+
   if [ $API -ge 29 ]; then

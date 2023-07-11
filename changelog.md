@@ -1,3 +1,13 @@
+### v5.0 - 7.10.2023
+* Big thanks to @reiryuki for this update
+* Update to current magisk module template - minimum magisk v20.4
+* Context fix
+* Add stage_policy.conf support
+* Add KSU support
+* Add support for other partitions - requires ksu or magisk delta
+* Rework/simplify some scripting
+* Fix for disabling aml in manager
+
 ### v4.2 - 1.6.2023
 * Add support for V4A RE
 

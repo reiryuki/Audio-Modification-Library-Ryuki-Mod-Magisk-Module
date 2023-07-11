@@ -1,8 +1,8 @@
 # Variables
-MODPATH=${0%/*}
-API=
-moddir=
+MODPATH="${0%/*}"
+moddir="$(dirname $MODPATH)"
 amldir=
+API=
 [ $API -ge 26 ] && libdir="/vendor" || libdir="/system"
 
 # Functions
@@ -51,7 +51,7 @@ patch_cfgs() {
       *) return 1;;
     esac
   done
-  [ -z "$files" ] && files=$(find $MODPATH -type f -name "*audio*effects*.conf" -o -name "*audio*effects*.xml") || { files="$1"; shift; }
+  [ -z "$files" ] && files="$(find $MODPATH -type f -name "*audio*effects*.conf" -o -name "*audio*effects*.xml")" || { files="$1"; shift; }
   $first && { lib=true; effect=true; }
   if $proxy; then
     effname=$1; uid=${2:?}; shift 2
@@ -169,7 +169,7 @@ legacy_script() {
   local RUNONCE=false COUNT=1 LIBDIR=$libdir/lib/soundfx MOD=$mod
   (. $mod/.aml.sh) || echo "Error in $modname aml.sh script" >> $MODPATH/errors.txt
   for file in $files; do
-    local NAME=$(echo "$file" | sed "s|$mod|system|")
+    local NAME=$(echo "$file" | sed "s|$mod|system|g")
     $RUNONCE || { case $file in
                     *audio*effects*) (. $mod/.aml.sh) || [ "$(grep -x "$modname" $MODPATH/errors.txt)" ] || echo "Error in $modname aml.sh script" >> $MODPATH/errors.txt; COUNT=$(($COUNT + 1));;
                   esac; }
@@ -196,14 +196,19 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
     fi
   else
     # Favor vendor libs over system ones, no aml builtins are 64bit only - use 32bit lib dir
-    libs="$(find $mod/system/vendor/lib/soundfx $mod/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
+    if [ -L $MODPATH/system/vendor ]\
+    && [ -d $MODPATH/vendor ]; then
+      libs="$(find $mod/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
+    else
+      libs="$(find $mod/system/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
+    fi
     for lib in $libs; do
       for audmod in $MODPATH/.scripts/$(basename $lib)~*; do
         uuid=$(basename $audmod | sed -r "s/.*~(.*).sh/\1/")
         hexuuid="$(echo $uuid | sed -r -e "s/^(..)(..)(..)(..)-(..)(..)-(..)(..)-/\4\3\2\1\6\5\8\7-/" -e "s/-(..)(..)-(............)$/\2\1\3/")"
         xxd -p $lib | tr -d '\n' | grep -q "$hexuuid" || continue
         $(grep -xq "$modname" $amldir/modlist 2>/dev/null) || echo "$modname" >> $amldir/modlist
-        libfile="$(echo $lib | sed -e "s|$mod||" -e "s|/system/vendor|/vendor|")"
+        libfile="$(echo $lib | sed -e "s|$mod||g" -e 's|/system/vendor|/vendor|g')"
         . $audmod
       done
     done
@@ -212,7 +217,7 @@ done
 
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
 for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
-  j="$(echo $i | sed -e "s|$MODPATH||" -e 's|/system/odm|/odm|' -e 's|/system/my_product|/my_product|')"
+  j="$(echo $i | sed -e "s|$MODPATH||g" -e 's|/system/odm|/odm|g' -e 's|/system/my_product|/my_product|g')"
   umount $j
   mount -o bind $i $j
 done

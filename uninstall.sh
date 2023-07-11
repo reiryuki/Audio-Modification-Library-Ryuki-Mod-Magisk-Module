@@ -1,5 +1,5 @@
 #!/system/bin/sh
-moddir=
+moddir=$(dirname ${0%/*})
 amldir=
 if [ -s $amldir/modlist ]; then
   while read mod; do
