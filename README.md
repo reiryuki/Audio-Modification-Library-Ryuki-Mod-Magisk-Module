@@ -16,9 +16,11 @@ To uninstall, REMOVE WITH MAGISK MANAGER
 * /odm/etc/ & /my_product/etc/ audio files mount bind support without Magisk Delta
 * stage_policy.conf file support
 * Fix bugs & permissions
-* Support module that copies audio files in post-fs-data.sh instead of in customize.sh
+* Support module that copies audio files via post-fs-data.sh instead of customize.sh
 * Does not copy/modify \*audio\*effects\*spatializer\*.xml that causes conflict in audio flinger
 * Prevent /data modifying failure in some devices
+* Prevent command failure caused by selinux denial
+* Does not need to reinstall if Android SDK API version is changed or switched from official Magisk to Magisk Delta and vice-versa
 
 ## Ryuki Mod Version Download Link and Changelog
 * Update via Magisk/KernelSU app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://www.pling.com/p/1981006/

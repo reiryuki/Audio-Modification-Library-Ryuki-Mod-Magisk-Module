@@ -1,0 +1,41 @@
+# log
+allow system_server system_file file write
+
+# context
+create { system_lib_file vendor_file vendor_configs_file }
+allow { system_file system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate
+allow init { system_file system_lib_file vendor_file vendor_configs_file } { dir file } relabelfrom
+
+# additional
+allow { hal_audio_default mtk_hal_audio audioserver } system_suspend_hwservice hwservice_manager find
+allow { hal_audio_default mtk_hal_audio audioserver } hal_system_suspend_service service_manager find
+allow { hal_audio_default mtk_hal_audio audioserver } { default_prop boottime_prop audio_prop } file { read open getattr map }
+allow { hal_audio_default mtk_hal_audio audioserver } { mnt_vendor_file system_prop } file { read open getattr }
+allow { hal_audio_default mtk_hal_audio audioserver } radio_prop file { read open getattr map }
+allow { hal_audio_default mtk_hal_audio audioserver } sysfs_wake_lock file { write open }
+allow { hal_audio_default mtk_hal_audio audioserver } vendor_default_prop file { read open getattr }
+allow { hal_audio_default mtk_hal_audio audioserver } sysfs file { read open }
+allow { hal_audio_default mtk_hal_audio audioserver } system_prop file map
+allow { hal_audio_default mtk_hal_audio audioserver } vendor_pd_locater_dbg_prop file read
+allow { hal_audio_default mtk_hal_audio audioserver } sysfs_net dir search
+allow { hal_audio_default mtk_hal_audio audioserver } { sysfs_net sysfs } dir { read open }
+allow { hal_audio_default mtk_hal_audio audioserver } logd_socket sock_file write
+allow { hal_audio_default mtk_hal_audio audioserver } logd unix_stream_socket connectto
+allow { hal_audio_default mtk_hal_audio audioserver } { diag_device vendor_diag_device } chr_file { read write open ioctl getattr }
+allow { hal_audio_default mtk_hal_audio audioserver } device chr_file { read write }
+allow { hal_audio_default mtk_hal_audio audioserver } system_suspend binder call
+allow { hal_audio_default mtk_hal_audio audioserver } { system_app priv_app platform_app untrusted_app_29 untrusted_app_27 untrusted_app } fifo_file write
+allow hal_audio_default hal_audio_default capability2 block_suspend
+allow mtk_hal_audio mtk_hal_audio capability2 block_suspend
+allow audioserver audioserver capability2 block_suspend
+
+
+
+
+
+
+
+
+
+
+

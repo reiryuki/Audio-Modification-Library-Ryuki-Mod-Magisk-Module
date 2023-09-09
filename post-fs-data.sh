@@ -4,7 +4,7 @@ mount -o rw,remount /data
 # Variables
 MODPATH="${0%/*}"
 amldir=
-API=
+API="$(getprop ro.build.version.sdk)"
 filenames="*audio*effects*.conf -o -name *audio*effects*.xml\
            -o -name *policy*.conf -o -name *policy*.xml\
            -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
@@ -38,10 +38,10 @@ osp_detect() {
   for file in $files; do
     for osp in $type; do
       case $file in
-        *.conf) spaces=$(sed -n "/^output_session_processing {/,/^}/ {/^ *$osp {/p}" $file | sed -r "s/( *).*/\1/")
+        *.conf) spaces=$(sed -n "/^output_session_processing {/,/^}/ {/^ *$osp {/p}" $file | sed -r "s/( *).*/\1/g")
                 effects=$(sed -n "/^output_session_processing {/,/^}/ {/^$spaces\$osp {/,/^$spaces}/p}" $file | grep -E "^$spaces +[A-Za-z]+" | sed -r "s/( *.*) .*/\1/g")
                 for effect in ${effects}; do
-                  spaces=$(sed -n "/^effects {/,/^}/ {/^ *$effect {/p}" $file | sed -r "s/( *).*/\1/")
+                  spaces=$(sed -n "/^effects {/,/^}/ {/^ *$effect {/p}" $file | sed -r "s/( *).*/\1/g")
                   [ "$effect" != "atmos" -a "$effect" != "dtsaudio" ] && sed -i "/^effects {/,/^}/ {/^$spaces$effect {/,/^$spaces}/d}" $file
                 done
                 ;;
@@ -73,9 +73,11 @@ for file in $files; do
   cp_mv -c $file $MODPATH/system$name
 done
 files="$(find /vendor -type f -name $filenames)"
+if [ -L $MODPATH/system/vendor ]; then
+  mkdir -p $MODPATH/vendor
+fi
 for file in $files; do
-  if [ -L $MODPATH/system/vendor ]\
-  && [ -d $MODPATH/vendor ]; then
+  if [ -L $MODPATH/system/vendor ]; then
     cp_mv -c $file $MODPATH$file
   else
     cp_mv -c $file $MODPATH/system$file
@@ -94,8 +96,8 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml -a ! -name 'lost+fou
   for file in $files; do
     cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||g")
   done
-  # Chcon fix for Android Q+
-  if [ $API -ge 29 ]; then
+  # Chcon fix for Android O+
+  if [ "$API" -ge 26 ]; then
     if [ -L $mod/system/vendor ] && [ -d $mod/vendor ]; then
       chcon -R u:object_r:vendor_file:s0 $mod/vendor/lib*/soundfx 2>/dev/null
     else
@@ -105,10 +107,9 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml -a ! -name 'lost+fou
 done
 
 # Set perms and such
-if [ $API -ge 26 ]; then
+if [ "$API" -ge 26 ]; then
   set_perm_recursive $MODPATH/system/odm/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
-  if [ -L $MODPATH/system/vendor ]\
-  && [ -d $MODPATH/vendor ]; then
+  if [ -L $MODPATH/system/vendor ]; then
     set_perm_recursive $MODPATH/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
     set_perm_recursive $MODPATH/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
     set_perm_recursive $MODPATH/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0

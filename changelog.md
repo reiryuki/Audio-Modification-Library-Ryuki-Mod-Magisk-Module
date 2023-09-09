@@ -1,3 +1,6 @@
+### v5.1 - 7.15.2023
+* Fix for magisk delta
+
 ### v5.0 - 7.10.2023
 * Big thanks to @reiryuki for this update
 * Update to current magisk module template - minimum magisk v20.4

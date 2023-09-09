@@ -4,7 +4,7 @@ amldir=
 if [ -s $amldir/modlist ]; then
   while read mod; do
     [ -d "$moddir/$mod" ] || continue
-    for file in $(find $amldir/$mod -type f 2>/dev/null | sed "s|$amldir/||"); do
+    for file in $(find $amldir/$mod -type f 2>/dev/null | sed "s|$amldir/||g"); do
       [ -f "$moddir/$file" ] || mkdir -p "$(dirname "$moddir/$file")" && cp -af $amldir/$file $moddir/$file
     done
   done < $amldir/modlist
