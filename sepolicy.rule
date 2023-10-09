@@ -14,7 +14,7 @@ allow { hal_audio_default mtk_hal_audio audioserver } { mnt_vendor_file system_p
 allow { hal_audio_default mtk_hal_audio audioserver } radio_prop file { read open getattr map }
 allow { hal_audio_default mtk_hal_audio audioserver } sysfs_wake_lock file { write open }
 allow { hal_audio_default mtk_hal_audio audioserver } vendor_default_prop file { read open getattr }
-allow { hal_audio_default mtk_hal_audio audioserver } sysfs file { read open }
+allow { hal_audio_default mtk_hal_audio audioserver } { sysfs sysfs_boot_mode } file { read open }
 allow { hal_audio_default mtk_hal_audio audioserver } system_prop file map
 allow { hal_audio_default mtk_hal_audio audioserver } vendor_pd_locater_dbg_prop file read
 allow { hal_audio_default mtk_hal_audio audioserver } sysfs_net dir search
@@ -28,6 +28,9 @@ allow { hal_audio_default mtk_hal_audio audioserver } { system_app priv_app plat
 allow hal_audio_default hal_audio_default capability2 block_suspend
 allow mtk_hal_audio mtk_hal_audio capability2 block_suspend
 allow audioserver audioserver capability2 block_suspend
+allow hal_audio_default hal_audio_default capability { sys_nice dac_override sys_admin dac_read_search }
+allow mtk_hal_audio mtk_hal_audio capability { sys_nice dac_override sys_admin dac_read_search }
+allow audioserver audioserver capability { sys_nice dac_override sys_admin dac_read_search }
 
 
 

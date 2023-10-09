@@ -220,7 +220,9 @@ for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
   umount $j
   mount -o bind $i $j
 done
-[ "$API" -ge 24 ] && killall audioserver || killall mediaserver
+# vendor.audio-hal-4-0 is not listed yet in /system/etc/init/audioserver.rc,
+# so android.hardware.audio@4.0-service-mediatek have to be included
+[ "$API" -ge 24 ] && killall audioserver android.hardware.audio@4.0-service-mediatek || killall mediaserver
 exit 0
 )&
 
