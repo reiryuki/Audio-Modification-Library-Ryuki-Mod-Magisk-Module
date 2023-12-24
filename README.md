@@ -15,7 +15,7 @@ To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
 * Does not copy/modify \*audio\*effects\*spatializer\*.xml that causes conflict in audio flinger
 * Prevent /data modifying failure in some devices
 * Prevent command failure caused by selinux denial
-* Does not need to reinstall if Android SDK API version is changed or if switched from Magisk official to Magisk Delta and vice-versa
+* Does not need to reinstall if Android SDK API version is changed or if switched from Magisk official to Magisk Delta/Kitsune Mask and vice-versa
 * Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link and Changelog
