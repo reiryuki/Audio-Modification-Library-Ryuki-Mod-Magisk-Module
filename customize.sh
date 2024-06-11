@@ -25,6 +25,13 @@ if [ "`grep_prop debug.log $OPTIONALS`" == 1 ]; then
   ui_print " "
 fi
 
+# recovery
+if [ "$BOOTMODE" != true ]; then
+  MODPATH_UPDATE=`echo $MODPATH | sed 's|modules/|modules_update/|g'`
+  rm -f $MODPATH/update
+  rm -rf $MODPATH_UPDATE
+fi
+
 # info
 MODVER=`grep_prop version $MODPATH/module.prop`
 MODVERCODE=`grep_prop versionCode $MODPATH/module.prop`
@@ -42,9 +49,9 @@ fi
 ui_print " "
 
 # note
-ui_print "- Module detection and patching happens at boot"
+ui_print "- Modules detection and patching happens at boot"
 ui_print "  The boot script handles everything"
-ui_print "  Disabled module will be ignored"
+ui_print "  Disabled modules will be ignored"
 ui_print " "
 
 # Escape each backslash and space since shell will expand it during echo
