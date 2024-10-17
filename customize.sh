@@ -3,6 +3,8 @@ ui_print " "
 
 # var
 UID=`id -u`
+[ ! "$UID" ] && UID=0
+[ -z $NVBASE ] && NVBASE=/data/adb
 
 # log
 if [ "$BOOTMODE" != true ]; then

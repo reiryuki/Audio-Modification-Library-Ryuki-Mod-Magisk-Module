@@ -21,4 +21,8 @@ To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
 ## Ryuki Mod Version Download Link and Changelog
 * Update via Magisk/KernelSU app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://www.pling.com/p/1981006/
 
-
+## Credits and Contributors
+- @ShadoV90
+- https://t.me/viperatmos
+- https://t.me/androidryukimodsdiscussions
+- You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment
