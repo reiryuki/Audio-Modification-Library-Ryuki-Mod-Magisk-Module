@@ -9,7 +9,7 @@ To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
 * Module [GitHub](https://github.com/Zackptg5/Audio-Modification-Library)
 
 ## Ryuki Mod Version Adventages
-* `android.hardware.audio@4.0-service-mediatek` restart support
+* Fix audio service restarts on some weird ROMs
 * /odm/etc/ & /my_product/etc/ audio files mount bind support in Magisk official
 * Support any module that copies audio files via post-fs-data.sh instead of customize.sh
 * Does not copy/modify \*audio\*effects\*spatializer\*.xml that causes conflict in audio flinger
@@ -20,6 +20,10 @@ To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
 
 ## Ryuki Mod Version Download Link and Changelog
 * Update via Magisk/KernelSU app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://www.pling.com/p/1981006/
+
+## Support & Bug Report
+- https://t.me/ryukinotes/54
+- If you don't do above, issues will be closed immediately
 
 ## Credits and Contributors
 - @ShadoV90

@@ -221,9 +221,15 @@ for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
   mount -o bind $i $j
 done
 [ "$API" -ge 24 ] && killall audioserver || killall mediaserver
-# vendor.audio-hal-4-0 is not listed yet in /system/etc/init/audioserver.rc,
-# so android.hardware.audio@4.0-service-mediatek have to be restarted here
-killall android.hardware.audio@4.0-service-mediatek
+# vendor.audio-hal-4-0 is not listed yet in
+# /system/etc/init/audioserver.rc on some weird ROMs, so
+# android.hardware.audio@4.0-service-mediatek has to be
+# restarted here.
+# vendor.audio-hal service is not restarted after audioserver
+# restarts in some weird ROMs, so
+# android.hardware.audio.service has to be restarted here
+# too.
+killall android.hardware.audio@4.0-service-mediatek android.hardware.audio.service
 exit 0
 )&
 

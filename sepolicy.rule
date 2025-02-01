@@ -9,14 +9,11 @@ allow init { system_file system_lib_file vendor_file vendor_configs_file } { dir
 # additional
 allow { hal_audio_default mtk_hal_audio audioserver } system_suspend_hwservice hwservice_manager find
 allow { hal_audio_default mtk_hal_audio audioserver } hal_system_suspend_service service_manager find
-allow { hal_audio_default mtk_hal_audio audioserver } { default_prop boottime_prop audio_prop } file { read open getattr map }
-allow { hal_audio_default mtk_hal_audio audioserver } { mnt_vendor_file system_prop } file { read open getattr }
-allow { hal_audio_default mtk_hal_audio audioserver } radio_prop file { read open getattr map }
+allow { hal_audio_default mtk_hal_audio audioserver } { default_prop boottime_prop audio_prop radio_prop vendor_pd_locater_dbg_prop } file { read open getattr map }
+allow { hal_audio_default mtk_hal_audio audioserver } { mnt_vendor_file system_prop vendor_default_prop } file { read open getattr }
 allow { hal_audio_default mtk_hal_audio audioserver } sysfs_wake_lock file { write open }
-allow { hal_audio_default mtk_hal_audio audioserver } vendor_default_prop file { read open getattr }
 allow { hal_audio_default mtk_hal_audio audioserver } { sysfs sysfs_boot_mode } file { read open }
 allow { hal_audio_default mtk_hal_audio audioserver } system_prop file map
-allow { hal_audio_default mtk_hal_audio audioserver } vendor_pd_locater_dbg_prop file read
 allow { hal_audio_default mtk_hal_audio audioserver } sysfs_net dir search
 allow { hal_audio_default mtk_hal_audio audioserver } { sysfs_net sysfs } dir { read open }
 allow { hal_audio_default mtk_hal_audio audioserver } logd_socket sock_file write
