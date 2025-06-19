@@ -217,8 +217,10 @@ done
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
 for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
   j="$(echo $i | sed -e "s|$MODPATH||g" -e 's|/system/odm|/odm|g' -e 's|/system/my_product|/my_product|g')"
-  umount $j
-  mount -o bind $i $j
+  if [ -f $j ]; then
+    umount $j
+    mount -o bind $i $j
+  fi
 done
 [ "$API" -ge 24 ] && killall audioserver || killall mediaserver
 # vendor.audio-hal-4-0 is not listed yet in
