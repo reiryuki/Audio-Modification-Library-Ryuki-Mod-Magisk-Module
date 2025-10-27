@@ -83,7 +83,7 @@ for file in $files; do
     cp_mv -c $file $MODPATH/system$file
   fi
 done
-rm -f `find $MODPATH -type f -name *audio*effects*spatializer*.xml`
+rm -f `find $MODPATH -type f -name *audio*effects*spatializer*.xml -o -name *audio*effects*haptic*.xml`
 osp_detect "music"
 
 # Detect/move audio mod files

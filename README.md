@@ -13,10 +13,10 @@ To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
 * /odm/etc/ & /my_product/etc/ audio files mount bind support in Magisk official
 * Fix audio service restarts on some weird ROMs
 * Support any module that copies audio files via post-fs-data.sh instead of customize.sh
-* Does not copy/modify \*audio\*effects\*spatializer\*.xml that causes conflict in audio flinger
+* Does not copy/modify \*audio\*effects\*spatializer\*.xml and \*audio\*effects\*haptic\*.xml that causes conflict
 * Prevent /data modifying failure in some devices
 * Prevent command failure caused by selinux denial
-* Does not need to reinstall if Android SDK API version is changed nor if switched from Magisk official to Magisk Delta/Kitsune Mask and vice-versa
+* No need to reinstall if Android SDK API version is changed nor if switched from Magisk official to Magisk Delta/Kitsune Mask and vice-versa
 * Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link and Changelog
