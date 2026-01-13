@@ -5,6 +5,13 @@ mount -o rw,remount /data
 MODPATH="${0%/*}"
 amldir=
 API="$(getprop ro.build.version.sdk)"
+if [ -L $MODPATH/system/vendor ]; then
+  mkdir -p $MODPATH/vendor
+fi
+if [ ! -d $MODPATH/vendor ]\
+|| [ -L $MODPATH/vendor ]; then
+  MODSYSTEM=/system
+fi
 filenames="*audio*effects*.conf -o -name *audio*effects*.xml\
            -o -name *policy*.conf -o -name *policy*.xml\
            -o -name *mixer*paths*.xml -o -name *mixer*gains*.xml\
@@ -73,15 +80,8 @@ for file in $files; do
   cp_mv -c $file $MODPATH/system$name
 done
 files="$(find /vendor -type f -name $filenames)"
-if [ -L $MODPATH/system/vendor ]; then
-  mkdir -p $MODPATH/vendor
-fi
 for file in $files; do
-  if [ -L $MODPATH/system/vendor ]; then
-    cp_mv -c $file $MODPATH$file
-  else
-    cp_mv -c $file $MODPATH/system$file
-  fi
+  cp_mv -c $file $MODPATH$MODSYSTEM$file
 done
 rm -f `find $MODPATH -type f -name *audio*effects*spatializer*.xml -o -name *audio*effects*haptic*.xml`
 osp_detect "music"
@@ -98,26 +98,16 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml -a ! -name 'lost+fou
   done
   # Chcon fix for Android O+
   if [ "$API" -ge 26 ]; then
-    if [ -L $mod/system/vendor ] && [ -d $mod/vendor ]; then
-      chcon -R u:object_r:vendor_file:s0 $mod/vendor/lib*/soundfx 2>/dev/null
-    else
-      chcon -R u:object_r:vendor_file:s0 $mod/system/vendor/lib*/soundfx 2>/dev/null
-    fi
+    chcon -R u:object_r:vendor_file:s0 $mod$MODSYSTEM/vendor/lib*/soundfx 2>/dev/null
   fi
 done
 
 # Set perms and such
 if [ "$API" -ge 26 ]; then
   set_perm_recursive $MODPATH/system/odm/etc 0 0 0755 0644 u:object_r:vendor_configs_file:s0
-  if [ -L $MODPATH/system/vendor ]; then
-    set_perm_recursive $MODPATH/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
-    set_perm_recursive $MODPATH/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
-    set_perm_recursive $MODPATH/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
-  else
-    set_perm_recursive $MODPATH/system/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
-    set_perm_recursive $MODPATH/system/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
-    set_perm_recursive $MODPATH/system/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
-  fi
+  set_perm_recursive $MODPATH$MODSYSTEM/vendor 0 2000 0755 0644 u:object_r:vendor_file:s0
+  set_perm_recursive $MODPATH$MODSYSTEM/vendor/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
+  set_perm_recursive $MODPATH$MODSYSTEM/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
 fi
 exit 0
 

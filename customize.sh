@@ -52,8 +52,8 @@ ui_print " "
 
 # note
 ui_print "- Modules detection and patching happens at boot"
-ui_print "  The boot script handles everything"
-ui_print "  Disabled modules will be ignored"
+ui_print "- The boot script handles everything"
+ui_print "- Disabled modules will be ignored"
 ui_print " "
 
 # Escape each backslash and space since shell will expand it during echo

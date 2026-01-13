@@ -4,6 +4,10 @@ moddir="$(dirname $MODPATH)"
 amldir=
 API="$(getprop ro.build.version.sdk)"
 [ "$API" -ge 26 ] && libdir="/vendor" || libdir="/system"
+if [ ! -d $MODPATH/vendor ]\
+|| [ -L $MODPATH/vendor ]; then
+  MODSYSTEM=/system
+fi
 
 # Functions
 cp_mv() {
@@ -196,11 +200,7 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
     fi
   else
     # Favor vendor libs over system ones, no aml builtins are 64bit only - use 32bit lib dir
-    if [ -L $MODPATH/system/vendor ]; then
-      libs="$(find $mod/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
-    else
-      libs="$(find $mod/system/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
-    fi
+    libs="$(find $mod$MODSYSTEM/vendor/lib/soundfx $mod/system/lib/soundfx -type f <libs> 2>/dev/null)"
     for lib in $libs; do
       for audmod in $MODPATH/.scripts/$(basename $lib)~*; do
         uuid=$(basename $audmod | sed -r "s/.*~(.*).sh/\1/g")
