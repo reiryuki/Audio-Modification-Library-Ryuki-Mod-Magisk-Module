@@ -21,6 +21,7 @@ allow { hal_audio_default mtk_hal_audio audioserver } { sysfs_net debugfs_ion } 
 allow { hal_audio_default mtk_hal_audio audioserver } { sysfs_net sysfs } dir { read open }
 allow { hal_audio_default mtk_hal_audio audioserver } logd_socket sock_file write
 allow { hal_audio_default mtk_hal_audio audioserver } logd unix_stream_socket connectto
+allow { hal_audio_default mtk_hal_audio audioserver } vendor_diag-router unix_stream_socket connectto
 allow { hal_audio_default mtk_hal_audio audioserver } { diag_device vendor_diag_device } chr_file { read write open ioctl getattr }
 allow { hal_audio_default mtk_hal_audio audioserver } device chr_file { read write }
 allow { hal_audio_default mtk_hal_audio audioserver } system_suspend binder call
