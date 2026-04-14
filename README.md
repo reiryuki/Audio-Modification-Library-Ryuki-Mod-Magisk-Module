@@ -10,7 +10,7 @@ v1.0_RM (v5.1_ryukimod.9)
 - Fix wrong target in latest KernelSU
 
 v5.1_ryukimod.8
-- Exclude audioeffectshaptic.xml
+- Exclude \*audio\*effects\*haptic\*.xml
 
 v5.1_ryukimod.7
 - Mount bind file only if the original file is exist
