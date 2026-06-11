@@ -2,7 +2,6 @@
 allow system_server system_file file write
 
 # context
-create { system_lib_file vendor_file vendor_configs_file }
 allow { system_file system_lib_file vendor_file vendor_configs_file } labeledfs filesystem associate
 allow init { system_file system_lib_file vendor_file vendor_configs_file } { dir file } relabelfrom
 
@@ -35,13 +34,5 @@ allow audioserver audioserver capability { sys_nice dac_override sys_admin dac_r
 allow hal_audio_default hal_audio_default tcp_socket create
 allow mtk_hal_audio mtk_hal_audio tcp_socket create
 allow audioserver audioserver tcp_socket create
-
-
-
-
-
-
-
-
 
 

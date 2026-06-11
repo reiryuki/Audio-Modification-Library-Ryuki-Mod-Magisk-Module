@@ -93,7 +93,8 @@ chmod 0755 $SERVICED/aml.sh
 sed -i -e "3a[ -d \"\$moddir/$MODID\" -a ! -f \"\$moddir/$MODID/disable\" ] && exit 0" -e "s|^moddir=.*|moddir=$NVBASE/modules|g" $SERVICED/aml.sh
 echo 'rm -f $0' >> $SERVICED/aml.sh
 
-rm -f $MODPATH/install.zip
+rm -rf $MODPATH/install.zip $MODPATH/image\
+ $MODPATH/changelog.md
 
 
 

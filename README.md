@@ -2,9 +2,12 @@
 
 ## Descriptions
 - Audio Modification Library (AML) is a compatibility framework originally created by zackptg5 & ahrion https://github.com/Zackptg5/Audio-Modification-Library that allows the seamless integration of multiple audio mods for Magisk installs. Enables supported audio mods to share the same needed files sudo as audio_effects.
-- To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU APP ONLY
+- To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU/APATCH/KITSUNE MASK APP ONLY
 
 ## Changelog
+
+v1.1_RM
+- Support NoMount metamodule
 
 v1.0_RM (v5.1_ryukimod.9)
 - Fix wrong target in latest KernelSU
@@ -39,12 +42,9 @@ v5.1_ryukimod
 - Fix permissions
 - Fix selinux denial
 
-v5.0_ryukimod
-- Fix uninstallation
-- Fix bug in KernelSU
-
 ## Ryuki Mod Version Adventages
 - Support newer Magisk version
+- Support NoMount metamodule
 - /odm/etc/ & /my_product/etc/ audio files mount bind support in Magisk official
 - Fix audio service restarts on some weird ROMs
 - Support any module that copies audio files via post-fs-data.sh instead of customize.sh
@@ -55,7 +55,7 @@ v5.0_ryukimod
 - Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link
-Update via Magisk/KernelSU app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://devuploads.com/fdj5zmz60ne1
+Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: 
 
 ## Support & Bug Report
 - https://t.me/ryukinotes/54
@@ -63,6 +63,8 @@ Update via Magisk/KernelSU app is still directed to official version, so the Ryu
 
 ## Credits and Contributors
 - @ShadoV90
+- @itsmax_18
+- @M73trz
 - https://t.me/viperatmos
 - https://t.me/androidryukimodsdiscussions
 - You can contribute ideas about this Magisk Module here: https://t.me/androidappsportdevelopment

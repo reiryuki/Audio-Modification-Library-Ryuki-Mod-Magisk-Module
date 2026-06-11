@@ -1,8 +1,12 @@
 # Some devices fails to modify /data at this time without remounting
 mount -o rw,remount /data
+MODPATH="${0%/*}"
+
+# Debug
+exec 2>$MODPATH/debug-pfsd.log
+set -x
 
 # Variables
-MODPATH="${0%/*}"
 amldir=
 API="$(getprop ro.build.version.sdk)"
 if [ -L $MODPATH/system/vendor ]; then
@@ -63,10 +67,6 @@ osp_detect() {
   return 0
 }
 
-# Debug
-exec 2>$MODPATH/debug-pfsd.log
-set -x
-
 # Restore and reset
 . $MODPATH/uninstall.sh
 moddir="$(dirname $MODPATH)" # Changed by uninstall script
@@ -110,8 +110,6 @@ if [ "$API" -ge 26 ]; then
   set_perm_recursive $MODPATH$MODSYSTEM/vendor/odm/etc 0 2000 0755 0644 u:object_r:vendor_configs_file:s0
 fi
 exit 0
-
-
 
 
 

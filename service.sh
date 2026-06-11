@@ -1,5 +1,10 @@
-# Variables
 MODPATH="${0%/*}"
+
+# Debug
+exec 2>$MODPATH/debug.log
+set -x
+
+# Variables
 moddir="$(dirname $MODPATH)"
 amldir=
 API="$(getprop ro.build.version.sdk)"
@@ -181,10 +186,6 @@ legacy_script() {
 }
 
 (
-# Debug
-exec 2>$MODPATH/debug.log
-set -x
-
 # Detect/install audio mods
 for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
   modname="$(basename $mod)"
@@ -215,11 +216,21 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml); do
 done
 
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
+# NoMount support
+NM=/data/adb/modules/nomount/bin/nm
+NOMOUNT=false
+[ -x "$NM" ] && "$NM" v >/dev/null 2>&1 && NOMOUNT=true
 for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
   j="$(echo $i | sed -e "s|$MODPATH||g" -e 's|/system/odm|/odm|g' -e 's|/system/my_product|/my_product|g')"
-  if [ -f $j ]; then
-    umount $j
-    mount -o bind $i $j
+  rj="$(realpath $j)"
+  if [ -f "$rj" ]; then
+    if $NOMOUNT; then
+      "$NM" del "$rj" 2>/dev/null || true
+      "$NM" add "$rj" "$i"
+    else
+      umount "$rj"
+      mount -o bind "$i" "$rj"
+    fi
   fi
 done
 [ "$API" -ge 24 ] && killall audioserver || killall mediaserver
