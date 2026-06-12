@@ -6,6 +6,9 @@
 
 ## Changelog
 
+v1.2_RM
+- /data/adb/modules/nomount/disable detection
+
 v1.1_RM
 - Support NoMount metamodule
 
@@ -35,13 +38,6 @@ v5.1_ryukimod.2
 - Restarts android.hardware.audio@4.0-service-mediatek
 - Add optional debug.log=1 for more detailed install log
 
-v5.1_ryukimod
-- Save install log at /sdcard/..._recovery.log if installing via Recovery
-- Does not require reinstall if Android SDK API is changed
-- Fix bug in KernelSU
-- Fix permissions
-- Fix selinux denial
-
 ## Ryuki Mod Version Adventages
 - Support newer Magisk version
 - Support NoMount metamodule
@@ -55,7 +51,7 @@ v5.1_ryukimod
 - Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link
-Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://devuploads.com/n5bir15sb7sg
+Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: 
 
 ## Support & Bug Report
 - https://t.me/ryukinotes/54

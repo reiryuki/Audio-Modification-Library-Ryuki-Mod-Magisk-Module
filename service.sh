@@ -217,16 +217,17 @@ done
 
 # Reload patched files - original mounted files are seemingly deleted and replaced by sed
 # NoMount support
-NM=/data/adb/modules/nomount/bin/nm
+MOD=/data/adb/modules/nomount
+NM=$MOD/bin/nm
 NOMOUNT=false
-[ -x "$NM" ] && "$NM" v >/dev/null 2>&1 && NOMOUNT=true
+[ ! -f $MOD/disable ] && [ -x $NM ] && $NM v >/dev/null 2>&1 && NOMOUNT=true
 for i in $(find $MODPATH/system $MODPATH/vendor -type f); do
   j="$(echo $i | sed -e "s|$MODPATH||g" -e 's|/system/odm|/odm|g' -e 's|/system/my_product|/my_product|g')"
   rj="$(realpath $j)"
   if [ -f "$rj" ]; then
     if $NOMOUNT; then
-      "$NM" del "$rj" 2>/dev/null || true
-      "$NM" add "$rj" "$i"
+      $NM del "$rj" 2>/dev/null || true
+      $NM add "$rj" "$i"
     else
       umount "$rj"
       mount -o bind "$i" "$rj"

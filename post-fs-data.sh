@@ -70,7 +70,7 @@ osp_detect() {
 # Restore and reset
 . $MODPATH/uninstall.sh
 moddir="$(dirname $MODPATH)" # Changed by uninstall script
-rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor -type f) $MODPATH/errors.txt $MODPATH/system.prop 2>/dev/null
+rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor -type f) $MODPATH/errors.txt 2>/dev/null
 [ -f "$moddir/acdb/post-fs-data.sh" ] && mv -f $moddir/acdb/post-fs-data.sh $moddir/acdb/post-fs-data.sh.bak
 mkdir $amldir
 # Don't follow symlinks
