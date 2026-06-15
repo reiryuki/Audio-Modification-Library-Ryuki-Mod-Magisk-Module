@@ -2,7 +2,7 @@
 
 ## Descriptions
 - Audio Modification Library (AML) is a compatibility framework originally created by zackptg5 & ahrion https://github.com/Zackptg5/Audio-Modification-Library that allows the seamless integration of multiple audio mods for Magisk installs. Enables supported audio mods to share the same needed files sudo as audio_effects.
-- [More details in support thread](https://forum.xda-developers.com/apps/magisk/mod-audio-modification-library-t3745466)
+- [More details](https://forum.xda-developers.com/apps/magisk/mod-audio-modification-library-t3745466)
 - I will not add built-in support for soundfx that are not yet registered in AudioModificationLibrary.sh in this module. So if your soundfx module is not yet registered in AudioModificationLibrary.sh, then you must add aml.sh file to your module so that your soundfx can work with this module.
 - To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU/APATCH/KITSUNE MASK APP ONLY
 
