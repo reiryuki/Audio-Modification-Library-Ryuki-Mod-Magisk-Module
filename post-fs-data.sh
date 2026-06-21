@@ -26,7 +26,7 @@ filenames="*audio*effects*.conf -o -name *audio*effects*.xml\
 set_perm() {
   chown $2:$3 $1 || return 1
   chmod $4 $1 || return 1
-  CON=$5
+  local CON=$5
   [ -z $CON ] && CON=u:object_r:system_file:s0
   chcon $CON $1 || return 1
 }
@@ -49,10 +49,10 @@ osp_detect() {
   for file in $files; do
     for osp in $type; do
       case $file in
-        *.conf) spaces=$(sed -n "/^output_session_processing {/,/^}/ {/^ *$osp {/p}" $file | sed -r "s/( *).*/\1/g")
+        *.conf) spaces=$(sed -n "/^output_session_processing {/,/^}/ {/^ *$osp {/p}" $file | sed -r "s/( *).*/\1/")
                 effects=$(sed -n "/^output_session_processing {/,/^}/ {/^$spaces\$osp {/,/^$spaces}/p}" $file | grep -E "^$spaces +[A-Za-z]+" | sed -r "s/( *.*) .*/\1/g")
                 for effect in ${effects}; do
-                  spaces=$(sed -n "/^effects {/,/^}/ {/^ *$effect {/p}" $file | sed -r "s/( *).*/\1/g")
+                  spaces=$(sed -n "/^effects {/,/^}/ {/^ *$effect {/p}" $file | sed -r "s/( *).*/\1/")
                   [ "$effect" != "atmos" -a "$effect" != "dtsaudio" ] && sed -i "/^effects {/,/^}/ {/^$spaces$effect {/,/^$spaces}/d}" $file
                 done
                 ;;
@@ -67,6 +67,9 @@ osp_detect() {
   return 0
 }
 
+# Set perms and such
+set_perm_recursive $MODPATH 0 0 0755 0644
+
 # Restore and reset
 . $MODPATH/uninstall.sh
 moddir="$(dirname $MODPATH)" # Changed by uninstall script
@@ -74,12 +77,12 @@ rm -rf $amldir $(find $MODPATH/system $MODPATH/vendor -type f) $MODPATH/errors.t
 [ -f "$moddir/acdb/post-fs-data.sh" ] && mv -f $moddir/acdb/post-fs-data.sh $moddir/acdb/post-fs-data.sh.bak
 mkdir $amldir
 # Don't follow symlinks
-files="$(find /system /odm /my_product -type f -name $filenames)"
+files="$(find /system /odm /my_product -type f -name $filenames 2>/dev/null)"
 for file in $files; do
   name=$(echo "$file" | sed 's|/system||g')
   cp_mv -c $file $MODPATH/system$name
 done
-files="$(find /vendor -type f -name $filenames)"
+files="$(find /vendor -type f -name $filenames 2>/dev/null)"
 for file in $files; do
   cp_mv -c $file $MODPATH$MODSYSTEM$file
 done
@@ -94,7 +97,7 @@ for mod in $(find $moddir/* -maxdepth 0 -type d ! -name aml -a ! -name 'lost+fou
   files="$(find $mod -type f -name $filenames 2>/dev/null)"
   [ "$files" ] && echo "$modname" >> $amldir/modlist || continue
   for file in $files; do
-    cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||g")
+    cp_mv -m $file $amldir/$modname$(echo "$file" | sed "s|$mod||")
   done
   # Chcon fix for Android O+
   if [ "$API" -ge 26 ]; then

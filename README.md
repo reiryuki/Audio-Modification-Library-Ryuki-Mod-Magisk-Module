@@ -2,11 +2,17 @@
 
 ## Descriptions
 - Audio Modification Library (AML) is a compatibility framework originally created by zackptg5 & ahrion https://github.com/Zackptg5/Audio-Modification-Library that allows the seamless integration of multiple audio mods for Magisk installs. Enables supported audio mods to share the same needed files sudo as audio_effects.
-- [More details](https://forum.xda-developers.com/apps/magisk/mod-audio-modification-library-t3745466)
+- More details: https://forum.xda-developers.com/apps/magisk/mod-audio-modification-library-t3745466 but this is just a documentation and I am not there.
 - I will not add built-in support for soundfx that are not yet registered in AudioModificationLibrary.sh in this module. So if your soundfx module is not yet registered in AudioModificationLibrary.sh, then you must add aml.sh file to your module so that your soundfx can work with this module.
+- patch_cfgs function is no longer relevant since now there is 64 bit only ROM, so you have to create your script independently in your aml.sh without the patch_cfgs function.
 - To uninstall, PLEASE REMOVE VIA MAGISK/KERNELSU/APATCH/KITSUNE MASK APP ONLY
 
 ## Changelog
+
+v1.3_RM
+- Resets module folders/files permissions at post-fs-data
+- Fix wrong logic at uninstall.sh
+- Revert unnecessary changes
 
 v1.2_RM
 - /data/adb/modules/nomount/disable detection
@@ -36,10 +42,6 @@ v5.1_ryukimod.3
 - Redirect /sdcard to /data/media/"$UID"
 - Restarts android.hardware.audio@4.0-service-mediatek for all SDK API
 
-v5.1_ryukimod.2
-- Restarts android.hardware.audio@4.0-service-mediatek
-- Add optional debug.log=1 for more detailed install log
-
 ## Ryuki Mod Version Adventages
 - Support newer Magisk version
 - Support NoMount metamodule
@@ -53,7 +55,7 @@ v5.1_ryukimod.2
 - Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link
-Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://devuploads.com/l8r2b9uj0gc7
+Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: 
 
 ## Support & Bug Report
 - https://t.me/ryukinotes/54

@@ -65,24 +65,24 @@ while read line; do
     \#*) if [ "$uuid" ]; then
            echo " " >> $MODPATH/.scripts/$uuid.sh
          fi
-         uuid=$(echo "$line" | sed "s/#//g");;
+         uuid=$(echo "$line" | sed "s/#//");;
     *) echo "$line" >> $MODPATH/.scripts/$uuid.sh;;
   esac
 done < $MODPATH/AudioModificationLibrary.sh
 rm -f $MODPATH/AudioModificationLibrary.sh
 # Generate libs var for faster script running
 for i in $MODPATH/.scripts/*; do
-  libs="$libs-name \"$(basename $i | sed "s/~.*//g")\" "
+  libs="$libs-name \"$(basename $i | sed "s/~.*//")\" "
 done
 libs="$(echo $libs | sed "s/\" /\" -o /g")"
-sed -i -e "s|<libs>|$libs|g" $MODPATH/service.sh
+sed -i -e "s|<libs>|$libs|" $MODPATH/service.sh
 
 # Set vars in script
 [ -z $SERVICED ] && SERVICED=$NVBASE/service.d
 amldir=$NVBASE/aml
 for i in amldir; do
   for j in post-fs-data service uninstall; do
-    sed -i "s|$i=|$i=$(eval echo \$$i)|g" $MODPATH/$j.sh
+    sed -i "s|$i=|$i=$(eval echo \$$i)|" $MODPATH/$j.sh
   done
 done
 
@@ -90,7 +90,7 @@ done
 mkdir $SERVICED 2>/dev/null
 cp -f $MODPATH/uninstall.sh $SERVICED/aml.sh
 chmod 0755 $SERVICED/aml.sh
-sed -i -e "3a[ -d \"\$moddir/$MODID\" -a ! -f \"\$moddir/$MODID/disable\" ] && exit 0" -e "s|^moddir=.*|moddir=$NVBASE/modules|g" $SERVICED/aml.sh
+sed -i -e "3a[ -d \"\$moddir/$MODID\" -a ! -f \"\$moddir/$MODID/disable\" ] && exit 0" -e "s|^moddir=.*|moddir=$NVBASE/modules|" $SERVICED/aml.sh
 echo 'rm -f $0' >> $SERVICED/aml.sh
 
 rm -rf $MODPATH/install.zip $MODPATH/image\
