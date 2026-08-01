@@ -55,7 +55,10 @@ v5.1_ryukimod.3
 - Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link
-Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://devuploads.com/gei5vixfhk9c
+Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://bicolink.com/otXQuoFKg
+
+## Download Tutorial
+https://t.me/ryukinotes/97
 
 ## Support & Bug Report
 - https://t.me/ryukinotes/54
