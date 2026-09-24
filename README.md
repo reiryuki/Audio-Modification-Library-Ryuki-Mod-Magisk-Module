@@ -54,7 +54,7 @@ v5.1_ryukimod.4
 - Fix bugs & permissions
 
 ## Ryuki Mod Version Download Link
-Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://github.com/reiryuki/Audio-Modification-Library-Ryuki-Mod-Magisk-Module
+Update via Magisk/KernelSU/Apatch app is still directed to official version, so the Ryuki Mod version can only be updated/downloaded from here: https://bicolink.com/9dFeqHawi
 
 ## Download Tutorial
 https://t.me/ryukinotes/97
