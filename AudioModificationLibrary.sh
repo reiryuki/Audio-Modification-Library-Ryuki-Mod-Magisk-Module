@@ -56,4 +56,6 @@ osp_detect "alarm notification ring"
 patch_cfgs -ole music dtsaudio 146edfc0-7ed2-11e4-80eb-0002a5d5c51b dtsaudio $libfile
 #libv4a_re.so~90380da3-8536-4744-a6a3-5731970e640f
 patch_cfgs v4a_re 90380da3-8536-4744-a6a3-5731970e640f v4a_re $libfile
+#libv4a_aidl.so~90380da3-8536-4744-a6a3-5731970e640f
+patch_cfgs v4a_standard_aidl 90380da3-8536-4744-a6a3-5731970e640f v4a_aidl $libfile
 #end
